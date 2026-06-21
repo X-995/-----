@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  @apply bg-ink-50 text-ink-900 dark:bg-ink-950 dark:text-ink-100;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Thin scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(120, 120, 140, 0.4) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 140, 0.4);
+  border-radius: 4px;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-accent-600 text-white hover:bg-accent-500;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent hover:bg-ink-100 dark:hover:bg-ink-800;
+  }
+  .btn-outline {
+    @apply btn border border-ink-200 hover:bg-ink-100 dark:border-ink-700 dark:hover:bg-ink-800;
+  }
+  .card {
+    @apply rounded-lg border border-ink-200 bg-white shadow-sm dark:border-ink-800 dark:bg-ink-900;
+  }
+  .input {
+    @apply w-full rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm outline-none focus:border-accent-500 dark:border-ink-700 dark:bg-ink-900;
+  }
+  .label {
+    @apply text-xs font-medium text-ink-500 dark:text-ink-400;
+  }
+}
+
+/* vis-timeline overrides for dark mode */
+.vis-timeline {
+  border-color: rgba(120, 120, 140, 0.3) !important;
+}
+.dark .vis-timeline,
+.dark .vis-panel,
+.dark .vis-labelset .vis-label,
+.dark .vis-time-axis .vis-text {
+  color: #e7e9ee !important;
+  border-color: rgba(120, 120, 140, 0.25) !important;
+}
+.dark .vis-time-axis .vis-grid.vis-minor {
+  border-color: rgba(120, 120, 140, 0.15) !important;
+}

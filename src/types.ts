@@ -114,6 +114,61 @@ export const DEFAULT_BEATS = ["开头钩子", "情境推进", "转折/高潮", "
 export const DEFAULT_MATERIAL_CATEGORIES = ["事件", "技巧", "资料", "灵感", "设定"];
 export const DEFAULT_WORLDVIEW_CATEGORIES = ["地理", "势力", "历史", "种族", "力量体系", "其他设定"];
 
+export interface ExtractionDimension {
+  key: string;
+  label: string;
+}
+
+export interface ExtractionTemplate {
+  category: string;
+  dimensions: ExtractionDimension[];
+}
+
+export const DEFAULT_EXTRACTION_TEMPLATES: ExtractionTemplate[] = [
+  {
+    category: "技巧",
+    dimensions: [
+      { key: "name", label: "技法名称" },
+      { key: "principle", label: "核心原理" },
+      { key: "example", label: "效果示例" },
+      { key: "usage", label: "适用场景" },
+    ],
+  },
+  {
+    category: "事件",
+    dimensions: [
+      { key: "plot", label: "情节要点" },
+      { key: "characters", label: "出场人物" },
+      { key: "conflict", label: "冲突类型" },
+      { key: "turn", label: "转折" },
+    ],
+  },
+  {
+    category: "资料",
+    dimensions: [
+      { key: "knowledge", label: "核心知识点" },
+      { key: "background", label: "时代背景" },
+      { key: "detail", label: "可参考细节" },
+    ],
+  },
+  {
+    category: "灵感",
+    dimensions: [
+      { key: "source", label: "灵感来源" },
+      { key: "direction", label: "可发展方向" },
+      { key: "theme", label: "关联主题" },
+    ],
+  },
+  {
+    category: "设定",
+    dimensions: [
+      { key: "desc", label: "设定描述" },
+      { key: "logic", label: "内在逻辑" },
+      { key: "relation", label: "与其他设定的关联" },
+    ],
+  },
+];
+
 export interface AISettings {
   provider: string;
   baseUrl: string;

@@ -3,9 +3,11 @@ import { persist } from "zustand/middleware";
 import {
   AISettings,
   DEFAULT_DIRS,
+  DEFAULT_EXTRACTION_TEMPLATES,
   DEFAULT_MATERIAL_CATEGORIES,
   DEFAULT_MATRIX_DIMENSIONS,
   DEFAULT_WORLDVIEW_CATEGORIES,
+  ExtractionTemplate,
   MatrixDimension,
   ProjectDirs,
   SearchSettings,
@@ -22,6 +24,7 @@ interface SettingsState {
   matrixDimensions: MatrixDimension[];
   materialCategories: string[];
   worldviewCategories: string[];
+  extractionTemplates: ExtractionTemplate[];
   setVaultPath: (p: string) => void;
   setDirs: (d: Partial<ProjectDirs>) => void;
   setAI: (a: Partial<AISettings>) => void;
@@ -31,6 +34,7 @@ interface SettingsState {
   setMatrixDimensions: (dims: MatrixDimension[]) => void;
   setMaterialCategories: (cats: string[]) => void;
   setWorldviewCategories: (cats: string[]) => void;
+  setExtractionTemplates: (t: ExtractionTemplate[]) => void;
 }
 
 export const useSettings = create<SettingsState>()(
@@ -50,6 +54,7 @@ export const useSettings = create<SettingsState>()(
       matrixDimensions: DEFAULT_MATRIX_DIMENSIONS,
       materialCategories: DEFAULT_MATERIAL_CATEGORIES,
       worldviewCategories: DEFAULT_WORLDVIEW_CATEGORIES,
+      extractionTemplates: DEFAULT_EXTRACTION_TEMPLATES,
       setVaultPath: (p) => set({ vaultPath: p }),
       setDirs: (d) => set((s) => ({ dirs: { ...s.dirs, ...d } })),
       setAI: (a) => set((s) => ({ ai: { ...s.ai, ...a } })),
@@ -60,6 +65,7 @@ export const useSettings = create<SettingsState>()(
       setMatrixDimensions: (dims) => set({ matrixDimensions: dims }),
       setMaterialCategories: (cats) => set({ materialCategories: cats }),
       setWorldviewCategories: (cats) => set({ worldviewCategories: cats }),
+      setExtractionTemplates: (t) => set({ extractionTemplates: t }),
     }),
     { name: "novel-app-settings" }
   )

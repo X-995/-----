@@ -15,7 +15,13 @@ import { useVault } from "../store/vault";
 import { pickFolder } from "../lib/fs";
 import { ensureProject } from "../lib/vault";
 import { AI_PROVIDERS, chat } from "../lib/ai";
-import { DEFAULT_MATRIX_DIMENSIONS, MatrixDimension } from "../types";
+import {
+  DEFAULT_EXTRACTION_TEMPLATES,
+  DEFAULT_MATRIX_DIMENSIONS,
+  ExtractionDimension,
+  ExtractionTemplate,
+  MatrixDimension,
+} from "../types";
 import { toast } from "../store/toast";
 
 export default function SettingsView() {
@@ -186,6 +192,13 @@ export default function SettingsView() {
           categories={s.worldviewCategories}
           onChange={s.setWorldviewCategories}
         />
+
+        {/* Extraction templates */}
+        <ExtractionTemplateManager
+          templates={s.extractionTemplates}
+          categories={s.materialCategories}
+          onChange={s.setExtractionTemplates}
+        />
       </div>
     </div>
   );
@@ -305,6 +318,124 @@ function CategoryManager({
         />
         <button className="btn-primary text-xs" onClick={add}><Plus size={13} /> 添加</button>
       </div>
+    </section>
+  );
+}
+
+function ExtractionTemplateManager({
+  templates,
+  categories,
+  onChange,
+}: {
+  templates: ExtractionTemplate[];
+  categories: string[];
+  onChange: (t: ExtractionTemplate[]) => void;
+}) {
+  const [activeCat, setActiveCat] = useState(categories[0] || "");
+  const [newDimLabel, setNewDimLabel] = useState("");
+
+  const allCats = Array.from(new Set([...categories, ...templates.map((t) => t.category)]));
+
+  function getTemplate(cat: string): ExtractionTemplate {
+    return templates.find((t) => t.category === cat) || { category: cat, dimensions: [] };
+  }
+
+  function updateTemplate(cat: string, dims: ExtractionDimension[]) {
+    const exists = templates.find((t) => t.category === cat);
+    if (exists) {
+      onChange(templates.map((t) => t.category === cat ? { ...t, dimensions: dims } : t));
+    } else {
+      onChange([...templates, { category: cat, dimensions: dims }]);
+    }
+  }
+
+  function addDim(cat: string) {
+    if (!newDimLabel.trim()) return;
+    const tmpl = getTemplate(cat);
+    const key = newDimLabel.trim().toLowerCase().replace(/\s+/g, "_").slice(0, 20);
+    updateTemplate(cat, [...tmpl.dimensions, { key, label: newDimLabel.trim() }]);
+    setNewDimLabel("");
+  }
+
+  function removeDim(cat: string, idx: number) {
+    const tmpl = getTemplate(cat);
+    updateTemplate(cat, tmpl.dimensions.filter((_, i) => i !== idx));
+  }
+
+  function updateDimLabel(cat: string, idx: number, label: string) {
+    const tmpl = getTemplate(cat);
+    updateTemplate(cat, tmpl.dimensions.map((d, i) => i === idx ? { ...d, label } : d));
+  }
+
+  function reset(cat: string) {
+    const def = DEFAULT_EXTRACTION_TEMPLATES.find((t) => t.category === cat);
+    if (def) updateTemplate(cat, def.dimensions);
+    else updateTemplate(cat, []);
+  }
+
+  const active = activeCat || allCats[0] || "";
+  const tmpl = getTemplate(active);
+
+  return (
+    <section className="card max-w-3xl p-5">
+      <h2 className="mb-1 font-semibold">素材摘要提取模板</h2>
+      <p className="mb-3 text-xs text-ink-400">
+        不同类别的素材用不同的维度模板，AI 摘要时按模板结构化提取关键信息。
+      </p>
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        {allCats.map((c) => (
+          <button
+            key={c}
+            onClick={() => setActiveCat(c)}
+            className={`rounded-full border px-3 py-1 text-xs ${
+              active === c
+                ? "border-accent-600 bg-accent-600/15 text-accent-500 font-medium"
+                : "border-ink-200 hover:border-accent-500 dark:border-ink-700"
+            }`}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+      {active && (
+        <>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-ink-500">「{active}」的提取维度</span>
+            <button className="btn-ghost text-xs" onClick={() => reset(active)}>恢复预制</button>
+          </div>
+          <div className="space-y-1.5 mb-3">
+            {tmpl.dimensions.length === 0 && (
+              <p className="text-xs text-ink-400">暂无维度，点下方添加，或「恢复预制」。</p>
+            )}
+            {tmpl.dimensions.map((d, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <span className="w-5 text-center text-xs text-ink-400">{i + 1}</span>
+                <input
+                  className="input flex-1 py-1 text-sm"
+                  value={d.label}
+                  onChange={(e) => updateDimLabel(active, i, e.target.value)}
+                  placeholder="维度名"
+                />
+                <button className="btn-ghost px-1 text-rose-500" onClick={() => removeDim(active, i)}>
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              className="input flex-1 py-1 text-sm"
+              placeholder="新增维度名，如「适用场景」"
+              value={newDimLabel}
+              onChange={(e) => setNewDimLabel(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addDim(active)}
+            />
+            <button className="btn-primary text-xs" onClick={() => addDim(active)}>
+              <Plus size={13} /> 添加
+            </button>
+          </div>
+        </>
+      )}
     </section>
   );
 }

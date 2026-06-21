@@ -1,4 +1,4 @@
-# 墨链 · 小说创作助手
+# 小说创作助手
 
 一个可与 Obsidian 联动的 Windows 桌面应用，辅助小说创作。所有数据以 **Markdown + YAML frontmatter** 形式直接存储在你的 Obsidian vault 中，本应用与 Obsidian 可同时编辑、自动双向同步。
 
